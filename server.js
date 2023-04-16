@@ -6,7 +6,8 @@ const fs = require("fs");
 const uniqid = require("uniqid");
 const notesData = require("./db/db.json");
 
-console.log(uniqid());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
@@ -23,7 +24,7 @@ app.get("/api/notes", (req, res) => res.json(notesData));
 // id when it's saved (look into npm packages that could do this for you).
 app.post("/api/notes", (req, res) => {
   // Destructuring assignment for the items in req.body
-  const {} = req.body;
+  const { title, text } = req.body;
 
   // Variable for the object we will save
   const newNote = {
@@ -31,6 +32,14 @@ app.post("/api/notes", (req, res) => {
     text,
     note_id: uniqid(),
   };
+
+  notesData.push(newNote);
+
+  fs.writeFile("./db/db.json", JSON.stringify(notesData, null, 4), (writeErr) =>
+    writeErr
+      ? console.error(writeErr)
+      : console.info("Successfully saved note!")
+  );
 });
 
 // DELETE /api/notes/:id should receive a query parameter containing the id of a note to delete. In order

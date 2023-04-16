@@ -33,14 +33,15 @@ const getNotes = () =>
     },
   });
 
-const saveNote = (note) =>
-  fetch("/api/notes", {
+const saveNote = (note) => {
+  return fetch("/api/notes", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(note),
   });
+};
 
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
@@ -119,6 +120,7 @@ const handleRenderSaveBtn = () => {
 
 // Render the list of note titles
 const renderNoteList = async (notes) => {
+  console.log("renderNoteList is running");
   let jsonNotes = await notes.json();
   if (window.location.pathname === "/notes") {
     noteList.forEach((el) => (el.innerHTML = ""));

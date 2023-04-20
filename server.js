@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const fs = require("fs");
 const uniqid = require("uniqid");
 const notesData = require("./db/db.json");
@@ -11,12 +11,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
-// GET /notes should return the notes.html file.
+// GET /notes returns notes.html file
 app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 
-// GET /api/notes should read the db.json file and return all saved notes as JSON.
+// GET /api/notes reads db.json file and return all saved notes as JSON.
 app.get("/api/notes", (req, res) => res.json(notesData));
 
 // POST /api/notes should receive a new note to save on the request body, add it to the db.json file,
@@ -40,6 +40,13 @@ app.post("/api/notes", (req, res) => {
       ? console.error(writeErr)
       : console.info("Successfully saved note!")
   );
+
+  const response = {
+    status: "success",
+    body: newNote,
+  };
+
+  res.status(201).json(response);
 });
 
 // DELETE /api/notes/:id should receive a query parameter containing the id of a note to delete. In order
